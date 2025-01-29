@@ -14,7 +14,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($user && password_verify($password, $user['password'])) {
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email']; // Add this line to store email
+            $_SESSION['user_email'] = $user['email'];
+            $_SESSION['firstname'] = $user['firstname'];
+            $_SESSION['lastname'] = $user['lastname'];
             $_SESSION['success_message'] = "Login successful!";
             header("Location: index.php");
             exit();
@@ -35,13 +37,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Login</title>
 </head>
 <body>
+    <h1>Login</h1>
     <form method="post" action="login.php">
         <label for="email">Email</label><br>
-        <input type="email" id="email" name="email" required><br>
+        <input type="email" id="email" name="email" required placeholder="Enter your email"><br>
         <label for="password">Password</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+        <input type="password" id="password" name="password" required placeholder="Enter your password"><br><br>
         <a href="register.php">Don't have an account? Click here to register!</a> <br><br>
         <input type="submit" value="Login">
+
     </form>
 </body>
 </html>

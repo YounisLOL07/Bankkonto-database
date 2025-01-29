@@ -15,7 +15,7 @@ session_start();
     <div class="nav-container">
     <?php if (isset($_SESSION['user_id'])): ?>
         <a href="index.php">Home</a>
-        <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION['user_email']); ?></span>
+        <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION['firstname']); ?></span>
         <a href="logout.php">Logout</a>
     <?php else: ?>
         <a href="index.php">Home</a>

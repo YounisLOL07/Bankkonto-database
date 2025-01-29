@@ -28,17 +28,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <title>Register</title>
 </head>
 <body>
+    <h1>Register</h1>
     <form method="post" action="register.php">
         <label for="firstname">First Name</label><br>
-        <input type="text" id="firstname" name="firstname" required><br>
+        <input type="text" id="firstname" name="firstname" required placeholder="Enter your first name"><br><br>
         <label for="lastname">Last Name</label><br>
-        <input type="text" id="lastname" name="lastname" required><br>
+        <input type="text" id="lastname" name="lastname" required placeholder="Enter your last name"><br><br>
         <label for="email">Email</label><br>
-        <input type="email" id="email" name="email" required><br>
-        <label for="password">Password</label><br>
-        <input type="password" id="password" name="password" required><br><br>
+
+        <input type="email" id="email" name="email" required placeholder="Enter your email"><br><br>
+        <label for="password" >Password</label><br>
+        <input type="password" id="password" name="password" required placeholder="Enter your password"><br><br>
         <a href="login.php">Already have a user? Click here to login!</a> <br><br>
         <input type="submit" value="Register">
+
     </form>
 </body>
 </html>
