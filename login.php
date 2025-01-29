@@ -13,7 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
-            // Redirect to a protected page or dashboard
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['user_email'] = $user['email']; // Add this line to store email
+            $_SESSION['success_message'] = "Login successful!";
             header("Location: index.php");
             exit();
         } else {

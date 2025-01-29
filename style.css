@@ -58,3 +58,14 @@ body {
     margin-top:auto;
 }
 
+.welcome-text {
+    color: #333;
+    margin-right: 20px;
+    padding: 8px;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
