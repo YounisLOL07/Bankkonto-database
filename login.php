@@ -1,5 +1,6 @@
 <?php
 require 'users_db.php';
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $email = $_POST['email'];
@@ -12,9 +13,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($user && password_verify($password, $user['password'])) {
-            echo "Login successful";
             // Redirect to a protected page or dashboard
-            header("Location: dashboard.php");
+            header("Location: index.php");
             exit();
         } else {
             echo "Invalid email or password";
