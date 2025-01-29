@@ -1,6 +1,8 @@
 <?php
 require 'users_db.php';
 
+session_start(); // Make sure session is started
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $firstname = $_POST['firstname'];
     $lastname = $_POST['lastname'];
@@ -11,11 +13,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $sql = "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         $stmt->execute([$firstname, $lastname, $email, $password]);
-        echo "User registered successfully";
+        
+        $_SESSION['success_message'] =  "Registration successful! Please login with your new account.";
         header("Location: login.php");
         exit();
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $_SESSION['error_message'] = "Registration failed: " . $e->getMessage();
+        header("Location: register.php");
+        exit();
     }
 }
 ?>

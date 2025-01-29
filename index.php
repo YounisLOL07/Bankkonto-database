@@ -28,7 +28,7 @@ session_start();
         <h1>Welcome to Bank of Younis</h1>
     </div>
     <div class="footer-container">
-        <p>&copy; 2021 Bank of Younis. All rights reserved.</p>
+        <p>&copy; 2025 Bank of Younis. All rights reserved.</p>
 
 
 </body>
