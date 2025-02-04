@@ -5,11 +5,6 @@ $password = "";
 $dbname = "users";
 
 try {
-  // Create a new PDO instance and connect to the database
-  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-  // Set the PDO error mode to exception
-  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
   // Create table if it doesn't exist
   $sql = "CREATE TABLE IF NOT EXISTS users (
     id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
@@ -21,9 +16,11 @@ try {
   )";
 
   // Execute query
+  // Need to establish connection first
+  $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+  $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
   $conn->exec($sql);
 } catch(PDOException $e) {
-  // Handle PDO exceptions (database-related errors)
   echo "Connection failed: " . $e->getMessage();
 }
 ?>

@@ -1,23 +1,65 @@
 <?php
 require 'users_db.php';
-
-session_start(); // Make sure session is started
+session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $firstname = $_POST['firstname'];
-    $lastname = $_POST['lastname'];
-    $email = $_POST['email'];
-    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
+    $firstname = trim($_POST['firstname']);
+    $lastname = trim($_POST['lastname']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+    $address = trim($_POST['address']);
+    
+    // Generate a 6-digit verification code
+    $verification_code = sprintf("%06d", mt_rand(0, 999999));
+
+    // Validation
+    if (strlen($password) < 8) {
+        $_SESSION['error_message'] = "Password must be at least 8 characters long!";
+        header("Location: register.php");
+        exit();
+    }
+
+    if ($password !== $confirm_password) {
+        $_SESSION['error_message'] = "Passwords do not match!";
+        header("Location: register.php");
+        exit();
+    }
+
+    // Check if email already exists
+    $stmt = $conn->prepare("SELECT email FROM users WHERE email = ?");
+    $stmt->execute([$email]);
+    if ($stmt->fetch()) {
+        $_SESSION['error_message'] = "Email already registered!";
+        header("Location: register.php");
+        exit();
+    }
+
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
     try {
-        $sql = "INSERT INTO users (firstname, lastname, email, password) VALUES (?, ?, ?, ?)";
+        // Start transaction
+        $conn->beginTransaction();
+
+        $sql = "INSERT INTO users (firstname, lastname, email, password, address, verification_code, is_verified) 
+                VALUES (?, ?, ?, ?, ?, ?, 0)";
         $stmt = $conn->prepare($sql);
-        $stmt->execute([$firstname, $lastname, $email, $password]);
+        $stmt->execute([$firstname, $lastname, $email, $hashed_password, $address, $verification_code]);
         
-        $_SESSION['success_message'] =  "Registration successful! Please login with your new account.";
-        header("Location: login.php");
+        // Store registration data in session
+        $_SESSION['pending_verification'] = [
+            'email' => $email,
+            'code' => $verification_code
+        ];
+
+        $conn->commit();
+        
+        // Show verification code once
+        $_SESSION['show_verification'] = true;
+        header("Location: verify.php");
         exit();
     } catch (PDOException $e) {
+        $conn->rollBack();
         $_SESSION['error_message'] = "Registration failed: " . $e->getMessage();
         header("Location: register.php");
         exit();
@@ -31,22 +73,42 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <!-- ... existing styles ... -->
 </head>
 <body>
     <h1>Register</h1>
-    <form method="post" action="register.php">
+    
+    <?php if (isset($_SESSION['error_message'])): ?>
+        <div class="message error-message show">
+            <?php 
+                echo htmlspecialchars($_SESSION['error_message']);
+                unset($_SESSION['error_message']);
+            ?>
+        </div>
+    <?php endif; ?>
+
+    <form method="post" action="register.php" id="registerForm">
         <label for="firstname">First Name</label><br>
-        <input type="text" id="firstname" name="firstname" required placeholder="Enter your first name"><br><br>
+        <input type="text" id="firstname" name="firstname" required><br><br>
+
         <label for="lastname">Last Name</label><br>
-        <input type="text" id="lastname" name="lastname" required placeholder="Enter your last name"><br><br>
+        <input type="text" id="lastname" name="lastname" required><br><br>
+
         <label for="email">Email</label><br>
+        <input type="email" id="email" name="email" required><br><br>
 
-        <input type="email" id="email" name="email" required placeholder="Enter your email"><br><br>
-        <label for="password" >Password</label><br>
-        <input type="password" id="password" name="password" required placeholder="Enter your password"><br><br>
-        <a href="login.php">Already have a user? Click here to login!</a> <br><br>
+        <label for="address">Address</label><br>
+        <textarea id="address" name="address" required></textarea><br><br>
+
+        <label for="password">Password (minimum 8 characters)</label><br>
+        <input type="password" id="password" name="password" required minlength="8"><br><br>
+
+        <label for="confirm_password">Confirm Password</label><br>
+        <input type="password" id="confirm_password" name="confirm_password" required><br><br>
+
         <input type="submit" value="Register">
-
     </form>
+
+    <!-- ... existing JavaScript ... -->
 </body>
 </html>

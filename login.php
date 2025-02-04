@@ -3,27 +3,36 @@ require 'users_db.php';
 session_start();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = $_POST['email'];
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
 
     try {
-        $sql = "SELECT * FROM users WHERE email = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $conn->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$email]);
-        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch();
+
         if ($user && password_verify($password, $user['password'])) {
+            if (!$user['is_verified']) {
+                $_SESSION['error_message'] = "Please verify your account first!";
+                header("Location: login.php");
+                exit();
+            }
+
             $_SESSION['user_id'] = $user['id'];
-            $_SESSION['user_email'] = $user['email'];
             $_SESSION['firstname'] = $user['firstname'];
-            $_SESSION['lastname'] = $user['lastname'];
+            $_SESSION['is_admin'] = $user['is_admin'];
             $_SESSION['success_message'] = "Login successful!";
             header("Location: index.php");
             exit();
         } else {
-            echo "Invalid email or password";
+            $_SESSION['error_message'] = "Invalid email or password";
+            header("Location: login.php");
+            exit();
         }
     } catch (PDOException $e) {
-        echo "Error: " . $e->getMessage();
+        $_SESSION['error_message'] = "Login failed: " . $e->getMessage();
+        header("Location: login.php");
+        exit();
     }
 }
 ?>
