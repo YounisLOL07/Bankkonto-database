@@ -17,6 +17,7 @@ session_start();
         <a href="index.php">Home</a>
         <span class="welcome-text">Welcome, <?php echo htmlspecialchars($_SESSION['firstname']); ?></span>
         <a href="logout.php">Logout</a>
+        
     <?php else: ?>
         <a href="index.php">Home</a>
         <a href="login.php">Login</a>
@@ -26,6 +27,8 @@ session_start();
 
     <div class="main-container">
         <h1>Welcome to Bank of Younis</h1>
+        <p>Your money is safe with us.</p>
+        <a href="create_account.php">Want a new bank account?</a>
     </div>
     <div class="footer-container">
         <p>&copy; 2025 Bank of Younis. All rights reserved.</p>
