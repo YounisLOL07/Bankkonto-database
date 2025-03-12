@@ -29,10 +29,12 @@ try {
     account_id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
     account_type VARCHAR(50) NOT NULL,
-    account_number VARCHAR(11) NOT NULL UNIQUE,
+    account_number VARCHAR(20) NOT NULL UNIQUE,
+    interest_rate DECIMAL(5, 2) NOT NULL,
     balance DECIMAL(10, 2) DEFAULT 0.00,
-    interest_rate DECIMAL(4, 2) NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES users(id)
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(user_id),
+    FOREIGN KEY (account_type) REFERENCES account_types(type_name)
   )";
 
   $sql = "CREATE TABLE IF NOT EXISTS account_types (

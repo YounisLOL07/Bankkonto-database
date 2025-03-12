@@ -1,4 +1,3 @@
-_account.php
 <?php
 require 'users_db.php';
 session_start();
@@ -37,13 +36,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Get available account types
 try {
     $stmt = $conn->query("SELECT type_name, description FROM account_types");
-    $account_types = $stmt->fetchAll();
+    $account_types = $stmt->fetchAll(PDO::FETCH_ASSOC);
     if (!$account_types) {
         $_SESSION['error_message'] = "No account types found.";
     }
 } catch (PDOException $e) {
     $_SESSION['error_message'] = "Failed to load account types: " . $e->getMessage();
 }
+
+
 ?>
 
 <!DOCTYPE html>
