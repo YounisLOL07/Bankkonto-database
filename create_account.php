@@ -1,3 +1,4 @@
+_account.php
 <?php
 require 'users_db.php';
 session_start();
@@ -37,6 +38,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 try {
     $stmt = $conn->query("SELECT type_name, description FROM account_types");
     $account_types = $stmt->fetchAll();
+    if (!$account_types) {
+        $_SESSION['error_message'] = "No account types found.";
+    }
 } catch (PDOException $e) {
     $_SESSION['error_message'] = "Failed to load account types: " . $e->getMessage();
 }
@@ -53,24 +57,34 @@ try {
             margin: 20px auto;
             padding: 20px;
         }
+        .success-message {
+            color: green;
+        }
+        .error-message {
+            color: red;
+        }
     </style>
 </head>
 <body>
     <div class="form-container">
         <h2>Create New Bank Account</h2>
         
-        <?php include 'messages.php'; // Create this file for displaying messages ?>
+        <?php include 'messages.php'; ?>
 
         <form method="post">
             <div>
                 <label for="account_type">Account Type:</label>
                 <select name="account_type" id="account_type" required>
-                    <?php foreach ($account_types as $type): ?>
-                        <option value="<?php echo htmlspecialchars($type['type_name']); ?>">
-                            <?php echo htmlspecialchars($type['type_name']); ?> - 
-                            <?php echo htmlspecialchars($type['description']); ?>
-                        </option>
-                    <?php endforeach; ?>
+                    <?php if (!empty($account_types)): ?>
+                        <?php foreach ($account_types as $type): ?>
+                            <option value="<?php echo htmlspecialchars($type['type_name']); ?>">
+                                <?php echo htmlspecialchars($type['type_name']); ?> - 
+                                <?php echo htmlspecialchars($type['description']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    <?php else: ?>
+                        <option value="">No account types available</option>
+                    <?php endif; ?>
                 </select>
             </div>
             <button type="submit">Create Account</button>

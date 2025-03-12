@@ -25,7 +25,7 @@ session_start();
     <?php endif; ?>
     </div>
 
-    <div class="main-container">
+    <div class="main-containerv2">
         <h1>Welcome to Bank of Younis</h1>
         <p>Your money is safe with us.</p>
         <a href="create_account.php">Want a new bank account?</a>

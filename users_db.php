@@ -15,7 +15,7 @@ try {
     reg_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
   )";
 
-  $sql = "CREATE TABLE transactions (
+  $sql = "CREATE TABLE IF NOT EXISTS transactions (
     transaction_id INT AUTO_INCREMENT PRIMARY KEY,
     from_account_id INT NOT NULL,
     to_account_id INT NOT NULL,
@@ -23,6 +23,22 @@ try {
     transaction_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (from_account_id) REFERENCES accounts(account_id),
     FOREIGN KEY (to_account_id) REFERENCES accounts(account_id)
+  )";
+
+  $sql = "CREATE TABLE IF NOT EXISTS accounts (
+    account_id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    account_type VARCHAR(50) NOT NULL,
+    account_number VARCHAR(11) NOT NULL UNIQUE,
+    balance DECIMAL(10, 2) DEFAULT 0.00,
+    interest_rate DECIMAL(4, 2) NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id)
+  )";
+
+  $sql = "CREATE TABLE IF NOT EXISTS account_types (
+    type_name VARCHAR(50) PRIMARY KEY,
+    description TEXT NOT NULL,
+    base_interest_rate DECIMAL(4, 2) NOT NULL
   )";
 
   $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
