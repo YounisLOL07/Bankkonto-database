@@ -28,6 +28,8 @@ session_start();
     <div class="main-containerv2">
         <h1>Welcome to Bank of Younis</h1>
         <p>Your money is safe with us.</p>
+        <a href="accounts_overview.php">Check out your account! <br></a>
+        <br>
         <a href="create_account.php">Want a new bank account?</a>
     </div>
     <div class="footer-container">

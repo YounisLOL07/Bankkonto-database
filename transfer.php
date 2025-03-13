@@ -6,6 +6,7 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
+$account_id = $_GET['account'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $from_account_id = $_POST['from_account_id'];
@@ -47,7 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 header("Location: accounts_overview.php");
 exit();
 ?>
-// ...existing code...
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
