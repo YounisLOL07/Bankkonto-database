@@ -51,8 +51,8 @@ try {
             <?php foreach ($transactions as $transaction): ?>
                 <tr>
                     <td><?php echo htmlspecialchars($transaction['transaction_date']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['from_account_number']); ?></td>
-                    <td><?php echo htmlspecialchars($transaction['to_account_number']); ?></td>
+                    <td><?php echo htmlspecialchars($transaction['from_account_number'] ?? ''); ?></td>
+                    <td><?php echo htmlspecialchars($transaction['to_account_number'] ?? ''); ?></td>
                     <td><?php echo number_format($transaction['amount'], 2); ?></td>
                 </tr>
             <?php endforeach; ?>
