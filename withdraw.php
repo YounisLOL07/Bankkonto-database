@@ -7,8 +7,9 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $account_id = $_POST['account_id'];
+$account_id = $_GET['account'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $amount = $_POST['amount'];
 
     try {
@@ -18,7 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $account = $stmt->fetch();
 
         if ($account && $account['balance'] >= $amount) {
-            // Deduct amount from account
+            // Perform the withdrawal
             $stmt = $conn->prepare("UPDATE accounts SET balance = balance - ? WHERE account_id = ?");
             $stmt->execute([$amount, $account_id]);
 
@@ -33,10 +34,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     } catch (PDOException $e) {
         $_SESSION['error_message'] = "Withdrawal failed: " . $e->getMessage();
     }
-}
 
-header("Location: accounts_overview.php");
-exit();
+    header("Location: accounts_overview.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -48,10 +49,7 @@ exit();
 <body>
     <h2>Withdraw Money</h2>
     <?php include 'messages.php'; ?>
-    <form method="POST" action="withdraw.php">
-        <label for="account_id">Account:</label>
-        <input type="text" id="account_id" name="account_id" required>
-        <br>
+    <form method="POST" action="withdraw.php?account=<?php echo $account_id; ?>">
         <label for="amount">Amount:</label>
         <input type="number" id="amount" name="amount" required>
         <br>

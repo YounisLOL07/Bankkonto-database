@@ -6,22 +6,23 @@ if (!isset($_SESSION['user_id'])) {
     header("Location: login.php");
     exit();
 }
-$account_id = $_GET['account'];
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $from_account_id = $_POST['from_account_id'];
+$from_account_id = $_GET['account'];
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $to_account_id = $_POST['to_account_id'];
     $amount = $_POST['amount'];
 
     try {
-        $conn->beginTransaction();
-
         // Check if from_account has sufficient balance
         $stmt = $conn->prepare("SELECT balance FROM accounts WHERE account_id = ? AND user_id = ?");
         $stmt->execute([$from_account_id, $_SESSION['user_id']]);
         $from_account = $stmt->fetch();
 
         if ($from_account && $from_account['balance'] >= $amount) {
+            // Perform the transfer
+            $conn->beginTransaction();
+
             // Deduct amount from from_account
             $stmt = $conn->prepare("UPDATE accounts SET balance = balance - ? WHERE account_id = ?");
             $stmt->execute([$amount, $from_account_id]);
@@ -43,10 +44,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $conn->rollBack();
         $_SESSION['error_message'] = "Transfer failed: " . $e->getMessage();
     }
-}
 
-header("Location: accounts_overview.php");
-exit();
+    header("Location: accounts_overview.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -58,11 +59,8 @@ exit();
 <body>
     <h2>Transfer Money</h2>
     <?php include 'messages.php'; ?>
-    <form method="POST" action="transfer.php">
-        <label for="from_account_id">From Account:</label>
-        <input type="text" id="from_account_id" name="from_account_id" required>
-        <br>
-        <label for="to_account_id">To Account:</label>
+    <form method="POST" action="transfer.php?account=<?php echo $from_account_id; ?>">
+        <label for="to_account_id">To Account ID:</label>
         <input type="text" id="to_account_id" name="to_account_id" required>
         <br>
         <label for="amount">Amount:</label>
